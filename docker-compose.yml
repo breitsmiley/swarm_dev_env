@@ -42,13 +42,21 @@ services:
       - type: bind
         source: ./apps/book-collector
         target: /usr/src/bc
+    # ports:
+    #   - 9000:9000
     configs:
       - source: c-bc-php_php.ini-v1
         target: /usr/local/etc/php/php.ini
         uid: '0'
         gid: '0'
         mode: 0440
-
+      - source: c-bc-php_docker-php-ext-xdebug.ini-v9
+        target: /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini
+        uid: '0'
+        gid: '0'
+        mode: 0440
+    environment:
+      XDEBUG_CONFIG: remote_host=192.168.0.102
 
 configs:
   c-bc-apache_httpd.conf-v1:
@@ -59,6 +67,8 @@ configs:
     file: ./docker/c-bc-apache/app-sf.conf
   c-bc-php_php.ini-v1:
     file: ./docker/c-bc-php/php.ini
+  c-bc-php_docker-php-ext-xdebug.ini-v9:
+    file: ./docker/c-bc-php/docker-php-ext-xdebug.ini
     
   # my_other_config:
   #   external: true
