@@ -2,6 +2,8 @@
 FROM httpd:2.4.29-alpine
 
 
+COPY . /usr/src/bc/public
+WORKDIR /usr/src/bc/public
 
 # # auxiliary env
 # #---------------------------

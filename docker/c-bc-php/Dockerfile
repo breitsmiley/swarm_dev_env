@@ -1,6 +1,11 @@
 
 FROM php:7.2.1-fpm-alpine3.7
 
+# Use multi-stage builds https://docs.docker.com/engine/userguide/eng-image/multistage-build/
+# TODO контролировать конечную версию alpine $ cat /etc/alpine-release 
+COPY --from=composer:1.6.2 /usr/bin/composer /usr/bin/composer
+
+# RUN mkdir -p /usr/src/bc
 COPY . /usr/src/bc
 WORKDIR /usr/src/bc
 # CMD [ "php", "./your-script.php" ]

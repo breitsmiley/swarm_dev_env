@@ -11,15 +11,26 @@ services:
     volumes:
       - type: bind
         source: ./apps/book-collector/public
-        target: /usr/local/apache2/htdocs
+        target: /usr/src/bc/public
     ports: 
       - 8080:80
-    # configs:
-    #   - source: c-bc-apache_httpd.conf-v1
-    #     target: /usr/local/apache2/conf/httpd.conf
-    #     uid: '0'
-    #     gid: '0'
-    #     mode: 0440
+      # - 80:80
+    configs:
+      - source: c-bc-apache_httpd.conf-v1
+        target: /usr/local/apache2/conf/httpd.conf
+        uid: '0'
+        gid: '0'
+        mode: 0440
+      - source: c-bc-apache_httpd-default.conf-v1
+        target: /usr/local/apache2/conf/extra/httpd-default.conf
+        uid: '0'
+        gid: '0'
+        mode: 0440
+      - source: c-bc-apache_app-sf.conf-v1
+        target: /usr/local/apache2/conf/extra/app-sf.conf
+        uid: '0'
+        gid: '0'
+        mode: 0440
 
   c-bc-php:
     image: 127.0.0.1:5000/c-bc-php
@@ -42,6 +53,10 @@ services:
 configs:
   c-bc-apache_httpd.conf-v1:
     file: ./docker/c-bc-apache/httpd.conf
+  c-bc-apache_httpd-default.conf-v1:
+    file: ./docker/c-bc-apache/httpd-default.conf
+  c-bc-apache_app-sf.conf-v1:
+    file: ./docker/c-bc-apache/app-sf.conf
   c-bc-php_php.ini-v1:
     file: ./docker/c-bc-php/php.ini
     
