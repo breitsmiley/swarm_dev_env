@@ -1,0 +1,54 @@
+version: '3.4'
+
+services: 
+
+  c-bc-apache:
+    image: 127.0.0.1:5000/c-bc-apache
+    build: 
+      context: .
+      # dockerfile: ./docker/book-collector-php/Dockerfile
+      dockerfile: ./docker/c-bc-apache/Dockerfile
+    volumes:
+      - type: bind
+        source: ./apps/book-collector/public
+        target: /usr/local/apache2/htdocs
+    ports: 
+      - 8080:80
+    # configs:
+    #   - source: c-bc-apache_httpd.conf-v1
+    #     target: /usr/local/apache2/conf/httpd.conf
+    #     uid: '0'
+    #     gid: '0'
+    #     mode: 0440
+
+  c-bc-php:
+    image: 127.0.0.1:5000/c-bc-php
+    build: 
+      context: .
+      # dockerfile: ./docker/book-collector-php/Dockerfile
+      dockerfile: ./docker/c-bc-php/Dockerfile
+    volumes:
+      - type: bind
+        source: ./apps/book-collector
+        target: /usr/src/bc
+    configs:
+      - source: c-bc-php_php.ini-v1
+        target: /usr/local/etc/php/php.ini
+        uid: '0'
+        gid: '0'
+        mode: 0440
+
+
+configs:
+  c-bc-apache_httpd.conf-v1:
+    file: ./docker/c-bc-apache/httpd.conf
+  c-bc-php_php.ini-v1:
+    file: ./docker/c-bc-php/php.ini
+    
+  # my_other_config:
+  #   external: true
+
+  # book-collector-node:
+  # book-collector-mariadb:
+ 
+# /docker/book-collector-php/php.ini /usr/local/etc/php/
