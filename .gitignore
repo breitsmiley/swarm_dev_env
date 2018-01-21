@@ -1,2 +1,3 @@
 .idea/
-
+/apps/book-collector/
+!/apps/book-collector/.gitkeep

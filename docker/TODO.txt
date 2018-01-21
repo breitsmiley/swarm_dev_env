@@ -1,0 +1,3 @@
+1) Apache SSL 443 self-signed
+2) не копировать в образ .git, .idea - добавить .dockerignore
+3) Запилить ACL вместо chmode в докерфайле
