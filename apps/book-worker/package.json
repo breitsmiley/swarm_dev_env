@@ -1,0 +1,14 @@
+{
+  "name": "node1",
+  "version": "1.0.0",
+  "description": "Node.js on Docker",
+  "author": "Nats NodeClient1 <test@example.com>",
+  "main": "app.js",
+  "scripts": {
+    "start": "node app.js"
+  },
+  "dependencies": {
+    "express": "^4.16.2",
+    "socket.io": "^2.0.4"
+  }
+}

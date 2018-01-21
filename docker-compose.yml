@@ -6,14 +6,13 @@ services:
     image: 127.0.0.1:5000/c-bc-apache
     build: 
       context: .
-      # dockerfile: ./docker/book-collector-php/Dockerfile
       dockerfile: ./docker/c-bc-apache/Dockerfile
     volumes:
       - type: bind
         source: ./apps/book-collector/public
         target: /usr/src/bc/public
     ports: 
-      - 8080:80
+      - "8080:80"
     configs:
       - source: c-bc-apache_httpd.conf-v1
         target: /usr/local/apache2/conf/httpd.conf
@@ -31,18 +30,15 @@ services:
         gid: '0'
         mode: 0440
 
-  c-bc-php:
+  c-cb-php:
     image: 127.0.0.1:5000/c-bc-php
     build: 
       context: .
-      # dockerfile: ./docker/book-collector-php/Dockerfile
       dockerfile: ./docker/c-bc-php/Dockerfile
     volumes:
       - type: bind
         source: ./apps/book-collector
         target: /usr/src/bc
-    # ports:
-    #   - 9000:9000
     configs:
       - source: c-bc-php_php.ini-v1
         target: /usr/local/etc/php/php.ini
@@ -54,16 +50,31 @@ services:
         uid: '0'
         gid: '0'
         mode: 0440
-    environment:
-      XDEBUG_CONFIG: remote_host=192.168.0.102
 
-  c-bc-worker:
-    image: 127.0.0.1:5000/c-bc-worker
-      build:
-        context: .
-        args:
-          - NODE_ENV=development
-        dockerfile: ./docker/c-bc-worker/Dockerfile
+  c-bc-db:
+    image: 127.0.0.1:5000/c-bc-db
+    build:
+      context: .
+      dockerfile: ./docker/c-bc-db/Dockerfile
+    ports:
+        - "3306:3306"
+    environment:
+        - MYSQL_DATABASE=bc
+        - MYSQL_USER=bc
+        - MYSQL_PASSWORD=passwd
+        - MYSQL_ROOT_PASSWORD=1234
+    volumes:
+      - type: volume
+        source: c-bc-db
+        target: /var/lib/mysql
+
+  c-bcw-node:
+    image: 127.0.0.1:5000/c-bcw-node
+    build:
+      context: .
+      args:
+        - NODE_ENV=development
+      dockerfile: ./docker/c-bcw-node/Dockerfile
     ports:
       - "8081:3000"
     volumes:
@@ -71,11 +82,9 @@ services:
         source: ./apps/book-worker
         target: /opt/app
       - type: volume
-        source: c-bc-worker_notused
+        source: c-bcw-node_notused
         target: /usr/src/app/node_modules
     command: ["node", "app.js"]
-    environment:
-      - NODE_ENV=development
 
 configs:
   c-bc-apache_httpd.conf-v1:
@@ -90,4 +99,5 @@ configs:
     file: ./docker/c-bc-php/docker-php-ext-xdebug.ini
 
 volumes:
-  c-bc-worker_notused:
+  c-bcw-node_notused:
+  c-bc-db:
