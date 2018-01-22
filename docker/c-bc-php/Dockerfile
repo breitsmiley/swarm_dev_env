@@ -1,8 +1,7 @@
 FROM php:7.2.1-fpm-alpine3.7
-
-
-COPY /docker/c-bc-php/php.ini /usr/local/etc/php/php.ini
-COPY /docker/c-bc-php/docker-php-ext-xdebug.ini /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini
+# for docker-compose mode
+# COPY /docker/c-bc-php/php.ini /usr/local/etc/php/php.ini
+# COPY /docker/c-bc-php/docker-php-ext-xdebug.ini /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini
 
 # Use multi-stage builds https://docs.docker.com/engine/userguide/eng-image/multistage-build/
 # TODO контролировать конечную версию alpine $ cat /etc/alpine-release  
@@ -23,14 +22,19 @@ RUN apk add --no-cache --virtual build-dependencies icu-dev \
 
 WORKDIR /usr/src/bc
 
-# делаем сборку
+# Install dependencies
+#-------------------------------------
 ENV COMPOSER_ALLOW_SUPERUSER 1
+# add composer parallel install plugin
 RUN composer global require "hirak/prestissimo:^0.3" --prefer-dist --no-progress --no-suggest --classmap-authoritative
 
-COPY /apps/book-collector/composer.* ./
+# copy to container composer.json and composer.lock
+COPY /apps/book-collector/composer* ./
 RUN composer install --prefer-dist --no-dev --no-autoloader --no-scripts --no-progress --no-suggest \
 	&& composer clear-cache
+#-------------------------------------
 
+# Copy project files as late as possible
 COPY /apps/book-collector ./
 
 # todo решить вопрос с правами
