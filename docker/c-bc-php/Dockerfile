@@ -1,5 +1,9 @@
 FROM php:7.2.1-fpm-alpine3.7
 
+
+COPY /docker/c-bc-php/php.ini /usr/local/etc/php/php.ini
+COPY /docker/c-bc-php/docker-php-ext-xdebug.ini /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini
+
 # Use multi-stage builds https://docs.docker.com/engine/userguide/eng-image/multistage-build/
 # TODO контролировать конечную версию alpine $ cat /etc/alpine-release  
 COPY --from=composer:1.6.2 /usr/bin/composer /usr/bin/composer
@@ -21,6 +25,8 @@ WORKDIR /usr/src/bc
 
 # делаем сборку
 ENV COMPOSER_ALLOW_SUPERUSER 1
+RUN composer global require "hirak/prestissimo:^0.3" --prefer-dist --no-progress --no-suggest --classmap-authoritative
+
 COPY /apps/book-collector/composer.* ./
 RUN composer install --prefer-dist --no-dev --no-autoloader --no-scripts --no-progress --no-suggest \
 	&& composer clear-cache

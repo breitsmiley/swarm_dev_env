@@ -11,8 +11,14 @@ services:
       - type: bind
         source: ./apps/book-collector/public
         target: /usr/src/bc/public
-    ports: 
-      - "8080:80"
+    # ports: 
+    #   - "8080:80"
+    ports:
+      - target: 80
+        published: 8080
+        protocol: tcp
+        mode: host # хак для работы xdebug в ржиме SWARM (для swarm этот режим по умолчанию ingress)
+
     configs:
       - source: c-bc-apache_httpd.conf-v1
         target: /usr/local/apache2/conf/httpd.conf
@@ -30,7 +36,7 @@ services:
         gid: '0'
         mode: 0440
 
-  c-cb-php:
+  c-bc-php:
     image: 127.0.0.1:5000/c-bc-php
     build: 
       context: .
@@ -45,7 +51,7 @@ services:
         uid: '0'
         gid: '0'
         mode: 0440
-      - source: c-bc-php_docker-php-ext-xdebug.ini-v9
+      - source: c-bc-php_docker-php-ext-xdebug.ini-v1
         target: /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini
         uid: '0'
         gid: '0'
@@ -95,7 +101,7 @@ configs:
     file: ./docker/c-bc-apache/app-sf.conf
   c-bc-php_php.ini-v1:
     file: ./docker/c-bc-php/php.ini
-  c-bc-php_docker-php-ext-xdebug.ini-v9:
+  c-bc-php_docker-php-ext-xdebug.ini-v1:
     file: ./docker/c-bc-php/docker-php-ext-xdebug.ini
 
 volumes:
