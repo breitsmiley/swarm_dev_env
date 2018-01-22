@@ -1,3 +1,5 @@
 .idea/
-/apps/book-collector/
 !/apps/book-collector/.gitkeep
+!/apps/book-collector/composer.json
+/apps/book-collector/
+
