@@ -24,14 +24,14 @@ WORKDIR /usr/src/bc
 
 # Install dependencies
 #-------------------------------------
-ENV COMPOSER_ALLOW_SUPERUSER 1
-# add composer parallel install plugin
-RUN composer global require "hirak/prestissimo:^0.3" --prefer-dist --no-progress --no-suggest --classmap-authoritative
-
-# copy to container composer.json and composer.lock
-COPY /apps/book-collector/composer* ./
-RUN composer install --prefer-dist --no-dev --no-autoloader --no-scripts --no-progress --no-suggest \
-	&& composer clear-cache
+#ENV COMPOSER_ALLOW_SUPERUSER 1
+## add composer parallel install plugin
+#RUN composer global require "hirak/prestissimo:^0.3" --prefer-dist --no-progress --no-suggest --classmap-authoritative
+#
+## copy to container composer.json and composer.lock
+#COPY /apps/book-collector/composer* ./
+#RUN composer install --prefer-dist --no-dev --no-autoloader --no-scripts --no-progress --no-suggest \
+#	&& composer clear-cache
 #-------------------------------------
 
 # Copy project files as late as possible
