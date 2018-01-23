@@ -90,7 +90,9 @@ services:
       - type: volume
         source: c-bcw-node_notused
         target: /usr/src/app/node_modules
-    command: ["node", "app.js"]
+    environment:
+      - NODE_ENV=development
+    # command: ["node", "app.js"]
 
   c-redis:
     image: 127.0.0.1:5000/c-redis
