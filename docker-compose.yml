@@ -1,4 +1,4 @@
-version: '3.5'
+version: '3.4'
 
 services: 
 
@@ -13,14 +13,13 @@ services:
         target: /usr/src/bc/public
 #    ports:
 #     - "8080:80"
-    expose:
-      - "9000"
-      - "9001"
-    ports:
-      - target: 80
-        published: 8080
-        protocol: tcp
-        mode: host # хак для работы xdebug в ржиме SWARM (для swarm этот режим по умолчанию ingress)
+    environment:
+      - VIRTUAL_HOST=whoami.local
+#    ports:
+#      - target: 80
+#        published: 8080
+#        protocol: tcp
+#        mode: host # хак для работы xdebug в ржиме SWARM (для swarm этот режим по умолчанию ingress)
 
 #    configs:
 #      - source: c-bc-apache_httpd.conf-v1
@@ -48,9 +47,6 @@ services:
       - type: bind
         source: ./apps/book-collector
         target: /usr/src/bc
-    expose:
-      - "9000"
-      - "9001"
 #    configs:
 #      - source: c-bc-php_php.ini-v1
 #        target: /usr/local/etc/php/php.ini
@@ -62,6 +58,27 @@ services:
 #        uid: '0'
 #        gid: '0'
 #        mode: 0440
+#  proxy:
+#    image: dockercloud/haproxy
+#    environment:
+#      - BALANCE=leastconn
+#    volumes:
+#      - /var/run/docker.sock:/var/run/docker.sock
+#    ports:
+#      - "80:80"
+##    networks:
+##      - web
+#    deploy:
+#      placement:
+#        constraints: [node.role == manager]
+
+  nginx-proxy:
+    image: jwilder/nginx-proxy
+    ports:
+      - "80:80"
+    volumes:
+      - /var/run/docker.sock:/tmp/docker.sock:ro
+
 
 #  c-bc-db:
 #    image: 127.0.0.1:5000/c-bc-db
