@@ -1,7 +1,7 @@
 FROM php:7.2.1-fpm-alpine3.7
 # for docker-compose mode
-# COPY /docker/c-bc-php/php.ini /usr/local/etc/php/php.ini
-# COPY /docker/c-bc-php/docker-php-ext-xdebug.ini /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini
+COPY /docker/c-bc-php/php.ini /usr/local/etc/php/php.ini
+COPY /docker/c-bc-php/docker-php-ext-xdebug.ini /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini
 
 # Use multi-stage builds https://docs.docker.com/engine/userguide/eng-image/multistage-build/
 # TODO контролировать конечную версию alpine $ cat /etc/alpine-release  

@@ -11,30 +11,33 @@ services:
       - type: bind
         source: ./apps/book-collector/public
         target: /usr/src/bc/public
-    # ports: 
-    #   - "8080:80"
+#    ports:
+#     - "8080:80"
+    expose:
+      - "9000"
+      - "9001"
     ports:
       - target: 80
         published: 8080
         protocol: tcp
         mode: host # хак для работы xdebug в ржиме SWARM (для swarm этот режим по умолчанию ingress)
 
-    configs:
-      - source: c-bc-apache_httpd.conf-v1
-        target: /usr/local/apache2/conf/httpd.conf
-        uid: '0'
-        gid: '0'
-        mode: 0440
-      - source: c-bc-apache_httpd-default.conf-v1
-        target: /usr/local/apache2/conf/extra/httpd-default.conf
-        uid: '0'
-        gid: '0'
-        mode: 0440
-      - source: c-bc-apache_app-sf.conf-v1
-        target: /usr/local/apache2/conf/extra/app-sf.conf
-        uid: '0'
-        gid: '0'
-        mode: 0440
+#    configs:
+#      - source: c-bc-apache_httpd.conf-v1
+#        target: /usr/local/apache2/conf/httpd.conf
+#        uid: '0'
+#        gid: '0'
+#        mode: 0440
+#      - source: c-bc-apache_httpd-default.conf-v1
+#        target: /usr/local/apache2/conf/extra/httpd-default.conf
+#        uid: '0'
+#        gid: '0'
+#        mode: 0440
+#      - source: c-bc-apache_app-sf.conf-v1
+#        target: /usr/local/apache2/conf/extra/app-sf.conf
+#        uid: '0'
+#        gid: '0'
+#        mode: 0440
 
   c-bc-php:
     image: 127.0.0.1:5000/c-bc-php
@@ -45,62 +48,65 @@ services:
       - type: bind
         source: ./apps/book-collector
         target: /usr/src/bc
-    configs:
-      - source: c-bc-php_php.ini-v1
-        target: /usr/local/etc/php/php.ini
-        uid: '0'
-        gid: '0'
-        mode: 0440
-      - source: c-bc-php_docker-php-ext-xdebug.ini-v4
-        target: /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini
-        uid: '0'
-        gid: '0'
-        mode: 0440
+    expose:
+      - "9000"
+      - "9001"
+#    configs:
+#      - source: c-bc-php_php.ini-v1
+#        target: /usr/local/etc/php/php.ini
+#        uid: '0'
+#        gid: '0'
+#        mode: 0440
+#      - source: c-bc-php_docker-php-ext-xdebug.ini-v4
+#        target: /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini
+#        uid: '0'
+#        gid: '0'
+#        mode: 0440
 
-  c-bc-db:
-    image: 127.0.0.1:5000/c-bc-db
-    build:
-      context: .
-      dockerfile: ./docker/c-bc-db/Dockerfile
-    ports:
-        - "3306:3306"
-    environment:
-        - MYSQL_DATABASE=bc
-        - MYSQL_USER=bc
-        - MYSQL_PASSWORD=passwd
-        - MYSQL_ROOT_PASSWORD=1234
-    volumes:
-      - type: volume
-        source: c-bc-db
-        target: /var/lib/mysql
+#  c-bc-db:
+#    image: 127.0.0.1:5000/c-bc-db
+#    build:
+#      context: .
+#      dockerfile: ./docker/c-bc-db/Dockerfile
+#    ports:
+#        - "3306:3306"
+#    environment:
+#        - MYSQL_DATABASE=bc
+#        - MYSQL_USER=bc
+#        - MYSQL_PASSWORD=passwd
+#        - MYSQL_ROOT_PASSWORD=1234
+#    volumes:
+#      - type: volume
+#        source: c-bc-db
+#        target: /var/lib/mysql
 
-  c-bcw-node:
-    image: 127.0.0.1:5000/c-bcw-node
-    build:
-      context: .
-      args:
-        - NODE_ENV=development
-      dockerfile: ./docker/c-bcw-node/Dockerfile
-    ports:
-      - "8081:3000"
-    volumes:
-      - type: bind
-        source: ./apps/book-worker
-        target: /opt/app
-      - type: volume
-        source: c-bcw-node_notused
-        target: /usr/src/app/node_modules
-    environment:
-      - NODE_ENV=development
+#  c-bcw-node:
+#    image: 127.0.0.1:5000/c-bcw-node
+#    build:
+#      context: .
+#      args:
+#        - NODE_ENV=development
+#      dockerfile: ./docker/c-bcw-node/Dockerfile
+#    ports:
+#      - "8081:3000"
+#    volumes:
+#      - type: bind
+#        source: ./apps/book-worker
+#        target: /opt/app
+#      - type: volume
+#        source: c-bcw-node_notused
+#        target: /usr/src/app/node_modules
+#    environment:
+#      - NODE_ENV=development
     # command: ["node", "app.js"]
 
-  c-redis:
-    image: 127.0.0.1:5000/c-redis
-    build:
-      context: .
-      dockerfile: ./docker/c-redis/Dockerfile
-    ports:
-      - "6379:6379"
+#  c-redis:
+#    image: 127.0.0.1:5000/c-redis
+#    build:
+#      context: .
+#      dockerfile: ./docker/c-redis/Dockerfile
+#    ports:
+#      - "6379:6379"
     ## TODO setup for persistent storage
     # volumes:
     #   - type: volume
@@ -113,35 +119,35 @@ services:
     #     gid: '0'
     #     mode: 0440
 
-  pydbgpproxy:
-    image: 127.0.0.1:5000/pydbgpproxy
-    build:
-      context: .
-      dockerfile: ./docker/pydbgpproxy/Dockerfile
-    # ports:
-    #   - "9001:9001"
-    ports:
-      - target: 9001
-        published: 9001
-        protocol: tcp
-        mode: host # хак для работы xdebug в ржиме SWARM (для swarm этот режим по умолчанию ingress)
+#  pydbgpproxy:
+#    image: 127.0.0.1:5000/pydbgpproxy
+#    build:
+#      context: .
+#      dockerfile: ./docker/pydbgpproxy/Dockerfile
+#    ports:
+#     - "9001:9001"
+#    ports:
+#      - target: 9001
+#        published: 9001
+#        protocol: tcp
+#        mode: host # хак для работы xdebug в ржиме SWARM (для swarm этот режим по умолчанию ingress)
     # expose:
     #   - "9000"
-
-configs:
-  c-bc-apache_httpd.conf-v1:
-    file: ./docker/c-bc-apache/httpd.conf
-  c-bc-apache_httpd-default.conf-v1:
-    file: ./docker/c-bc-apache/httpd-default.conf
-  c-bc-apache_app-sf.conf-v1:
-    file: ./docker/c-bc-apache/app-sf.conf
-  c-bc-php_php.ini-v1:
-    file: ./docker/c-bc-php/php.ini
-  c-bc-php_docker-php-ext-xdebug.ini-v4:
-    file: ./docker/c-bc-php/docker-php-ext-xdebug.ini
-  # c-redis_redis.conf-v1:
-  #   file: ./docker/c-redis/redis.conf
-
-volumes:
-  c-bcw-node_notused:
-  c-bc-db:
+#
+#configs:
+#  c-bc-apache_httpd.conf-v1:
+#    file: ./docker/c-bc-apache/httpd.conf
+#  c-bc-apache_httpd-default.conf-v1:
+#    file: ./docker/c-bc-apache/httpd-default.conf
+#  c-bc-apache_app-sf.conf-v1:
+#    file: ./docker/c-bc-apache/app-sf.conf
+#  c-bc-php_php.ini-v1:
+#    file: ./docker/c-bc-php/php.ini
+#  c-bc-php_docker-php-ext-xdebug.ini-v4:
+#    file: ./docker/c-bc-php/docker-php-ext-xdebug.ini
+#  # c-redis_redis.conf-v1:
+#  #   file: ./docker/c-redis/redis.conf
+#
+#volumes:
+#  c-bcw-node_notused:
+#  c-bc-db:
