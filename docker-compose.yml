@@ -51,7 +51,7 @@ services:
         uid: '0'
         gid: '0'
         mode: 0440
-      - source: c-bc-php_docker-php-ext-xdebug.ini-v1
+      - source: c-bc-php_docker-php-ext-xdebug.ini-v4
         target: /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini
         uid: '0'
         gid: '0'
@@ -113,6 +113,21 @@ services:
     #     gid: '0'
     #     mode: 0440
 
+  pydbgpproxy:
+    image: 127.0.0.1:5000/pydbgpproxy
+    build:
+      context: .
+      dockerfile: ./docker/pydbgpproxy/Dockerfile
+    # ports:
+    #   - "9001:9001"
+    ports:
+      - target: 9001
+        published: 9001
+        protocol: tcp
+        mode: host # хак для работы xdebug в ржиме SWARM (для swarm этот режим по умолчанию ingress)
+    # expose:
+    #   - "9000"
+
 configs:
   c-bc-apache_httpd.conf-v1:
     file: ./docker/c-bc-apache/httpd.conf
@@ -122,7 +137,7 @@ configs:
     file: ./docker/c-bc-apache/app-sf.conf
   c-bc-php_php.ini-v1:
     file: ./docker/c-bc-php/php.ini
-  c-bc-php_docker-php-ext-xdebug.ini-v1:
+  c-bc-php_docker-php-ext-xdebug.ini-v4:
     file: ./docker/c-bc-php/docker-php-ext-xdebug.ini
   # c-redis_redis.conf-v1:
   #   file: ./docker/c-redis/redis.conf
